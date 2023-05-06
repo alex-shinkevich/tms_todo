@@ -7,24 +7,64 @@ class TodoListCubit extends Cubit<TodoListState> {
   final _todoProvider = TodoProvider();
 
   TodoListCubit() : super(TodoListLoadingState()) {
-    _load();
+    load();
   }
 
-  void _load() async {
+  void _completeLoading(List<Todo> todos) {
+    if (todos.isEmpty) {
+      emit(TodoListEmptyState());
+      return;
+    }
+
+    emit(TodoListLoadedState(todos));
+  }
+
+  Future<void> load() async {
     try {
       final todos = await _todoProvider.getAllTodos();
-
-      if (todos.isEmpty) {
-        emit(TodoListEmptyState());
-        return;
-      }
-
-      emit(TodoListLoadedState(todos));
+      _completeLoading(todos);
     } catch (e, stack) {
       // print(e);
       // print(stack);
       emit(TodoListErrorState('Error'));
       rethrow;
+    }
+  }
+
+  void createNewTodo({
+    required String title,
+    String? description,
+    String? priority,
+    String? dueDate,
+  }) async {
+    final todo = await _todoProvider.createNewTodo(
+      title: title,
+      description: description,
+      priority: priority == null ? null : int.tryParse(priority),
+      dueDate: dueDate == null ? null : DateTime.tryParse(dueDate),
+    );
+
+    emit(TodoListLoadedState([
+      if (state is TodoListLoadedState) ...(state as TodoListLoadedState).todos,
+      todo,
+    ]));
+  }
+
+  void completeTodo(String id) async {
+    _todoProvider.completeTodo(id);
+
+    if (state is TodoListLoadedState) {
+      final todos = (state as TodoListLoadedState).todos.where((todo) => todo.id != id).toList();
+      _completeLoading(todos);
+    }
+  }
+
+  void deleteTodo(String id) async {
+    await _todoProvider.deleteTodo(id);
+
+    if (state is TodoListLoadedState) {
+      final todos = (state as TodoListLoadedState).todos.where((todo) => todo.id != id).toList();
+      _completeLoading(todos);
     }
   }
 }

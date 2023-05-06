@@ -5,10 +5,15 @@ import 'package:todo/screens/calendar_screen.dart';
 import 'package:todo/screens/focus_screen.dart';
 import 'package:todo/screens/home_screen.dart';
 import 'package:todo/screens/profile_screen.dart';
+import 'package:todo/screens/todo_screen.dart';
 import 'package:todo/widgets/nav_bar.dart';
 
 class AppScreen extends StatelessWidget {
   const AppScreen({Key? key}) : super(key: key);
+
+  void _navigateTodoScreen(BuildContext context) {
+    Navigator.of(context).push(MaterialPageRoute(builder: (context) => const TodoScreen()));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +47,7 @@ class AppScreen extends StatelessWidget {
             Positioned(
               bottom: 68,
               child: GestureDetector(
-                onTap: () {},
+                onTap: () => _navigateTodoScreen(context),
                 child: Container(
                   width: 64,
                   height: 64,

@@ -11,6 +11,7 @@ Todo _$TodoFromJson(Map<String, dynamic> json) => Todo(
       description: json['description'] as String,
       priority: json['priority'] as int,
       dueDate: _dueDateFromJson(json['due'] as Map<String, dynamic>?),
+      id: json['id'] as String,
     );
 
 Map<String, dynamic> _$TodoToJson(Todo instance) => <String, dynamic>{
@@ -18,4 +19,5 @@ Map<String, dynamic> _$TodoToJson(Todo instance) => <String, dynamic>{
       'description': instance.description,
       'priority': instance.priority,
       'due': instance.dueDate?.toIso8601String(),
+      'id': instance.id,
     };

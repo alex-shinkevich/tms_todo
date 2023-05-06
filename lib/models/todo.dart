@@ -6,16 +6,20 @@ part 'todo.g.dart';
 class Todo {
   @JsonKey(name: 'content')
   final String title;
+
   final String description;
   final int priority;
   @JsonKey(name: 'due', fromJson: _dueDateFromJson)
   final DateTime? dueDate;
+
+  final String id;
 
   const Todo({
     required this.title,
     required this.description,
     required this.priority,
     this.dueDate,
+    required this.id,
   });
 
   factory Todo.fromJson(Map<String, dynamic> json) => _$TodoFromJson(json);
